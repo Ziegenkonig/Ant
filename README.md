@@ -41,12 +41,20 @@ Stuff that's done:
     24.f) All ants leave food trail scents while delivering food and traveling to food
     
 25) Implement path-finding algorithm (A*) for forager ants, who can share the path that's generated with others
-  25.a) Using the Explored Scents as a map of nodes, use A* to find the shortest route back home
-  25.b) Connect each Explored Scent to it's neighbors via a specific radius (This was not easy)
-  25.c) Trigger algorithm that builds path when Forager initially finds food
-  25.d) Make goal node hardcoded at home
-  25.e) Make start node hardcoded at the food source
-  25.f) Make Hunt() exclusive to Foragers, have the algorithm trigger there
-  25.g) Create new Ant method for traveling along the path, backwards and forwards
-  25.h) Ensure A* only runs once per food source, even if another Forager finds the source
+
+    25.a) Using the Explored Scents as a map of nodes, use A* to find the shortest route back home
+    
+    25.b) Connect each Explored Scent to it's neighbors via a specific radius (This was not easy)
+    
+    25.c) Trigger algorithm that builds path when Forager initially finds food
+    
+    25.d) Make goal node hardcoded at home
+    
+    25.e) Make start node hardcoded at the food source
+    
+    25.f) Make Hunt() exclusive to Foragers, have the algorithm trigger there
+    
+    25.g) Create new Ant method for traveling along the path, backwards and forwards
+    
+    25.h) Ensure A* only runs once per food source, even if another Forager finds the source
 
