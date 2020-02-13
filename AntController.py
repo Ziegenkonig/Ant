@@ -11,5 +11,6 @@ class AntController(object):
 		self.foodbit_list = None
 		self.scent_list = None
 		self.a_star = None
+		self.obstacle_list = None
 
 

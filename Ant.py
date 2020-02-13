@@ -129,9 +129,17 @@ class Ant(object):
 						self.direction[1] = -self.speed
 
 				self.move( self.direction[0], self.direction[1] )
+
+				#Need to check for obstacles here
+				if not self.checkObstacles():
+					self.move(-self.direction[0], -self.direction[1])
+
 				self.state = 'Wandering'
 		else:
 			self.move( self.direction[0], self.direction[1] )
+			#Need to check for obstacles here
+			if not self.checkObstacles():
+				self.move(-self.direction[0], -self.direction[1])
 			self.state = 'Wandering'
 
 		#Maybe ant needs to stop being lazy
@@ -211,7 +219,7 @@ class Ant(object):
 			if self.target == self.food_trail_goal:
 
 				self.state = 'Harvesting Food'
-				print(self.name + ' has begun harvesting the delicious food!')
+				#print(self.name + ' has begun harvesting the delicious food!')
 				self.move( -self.direction[0], -self.direction[1] )
 
 			else:
@@ -273,7 +281,6 @@ class Ant(object):
 
 				if self.food_trail_goal:
 
-					print('Headed to food')
 					self.state = 'Following Food Trail'
 					self.target = self.food_trail[0]
 
@@ -374,6 +381,15 @@ class Ant(object):
 
 			self.food_scent_chance += 0.01
 
+
+	def checkObstacles(self):
+
+		for obstacle in self.controller.obstacle_list.obstacles:
+
+			if self.hit_box.colliderect(obstacle.hit_box):
+				return False
+
+		return True
 
 	def markTerritoryScent(self):
 

@@ -37,11 +37,19 @@ class FruitList(object):
 
 	def randomizePositions(self):
 
+		#Debugging, determines how close the fruit spawn to home
+		inner_bound = 350
+		outer_bound = 650
+
 		for i, fruit in enumerate(self.fruits):
 
 			#Want to exclude where the ants will be spawning from the spawn points
-			x = random.choice( [random.SystemRandom().randint(300,400),  random.SystemRandom().randint(600,700)] )
-			y = random.choice( [random.SystemRandom().randint(300,400),  random.SystemRandom().randint(600,700)] )
+			#Picking random positions while staying away from home
+			x = random.SystemRandom().randint(50, 950)
+			if inner_bound < x < outer_bound:
+				y = random.choice( [random.SystemRandom().randint(50,inner_bound),  random.SystemRandom().randint(outer_bound,950)] )
+			else:
+				y = random.SystemRandom().randint(50, 950)
 
 			fruit.move(x, y)
 

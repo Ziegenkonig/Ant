@@ -10,6 +10,7 @@ from AntController import AntController
 from FoodBitList import FoodBitList
 from ScentList import ScentList
 from Algorithms import AStar
+from ObstacleList import ObstacleList
 
 pygame.init()
 
@@ -32,6 +33,14 @@ swarm = AntSwarm(swarm_size, [window_size[0]/2, window_size[1]/2], screen, ant_s
 fruit_source_image = pygame.image.load('Fruit_Large.png')
 fruit_list = FruitList(screen, 3, fruit_source_image, ant_controller, 1000000)
 fruit_list.randomizePositions()
+ant_controller.fruit_list = fruit_list
+
+obstacle_source_images = []
+obstacle_source_images.append( pygame.image.load('Obstacle_1.png') )
+obstacle_source_images.append( pygame.image.load('Obstacle_2.png') )
+obstacle_source_images.append( pygame.image.load('Obstacle_3.png') )
+obstacle_source_images.append( pygame.image.load('Obstacle_4.png') )
+obstacle_list = ObstacleList( screen, ant_controller, obstacle_source_images, 40 )
 
 foodbit_source_image = pygame.image.load('Food_Bit.png')
 foodbit_list = FoodBitList(screen, foodbit_source_image, ant_controller)
@@ -41,11 +50,11 @@ scent_list = ScentList(screen, ant_controller, ant_source_image)
 a_star = AStar()
 
 ant_controller.ant_swarm = swarm
-ant_controller.fruit_list = fruit_list
 ant_controller.home = home
 ant_controller.foodbit_list = foodbit_list
 ant_controller.scent_list = scent_list
 ant_controller.a_star = a_star
+ant_controller.obstacle_list = obstacle_list
 
 clock = pygame.time.Clock()
 
@@ -63,7 +72,10 @@ while 1:
 	#I think it matters where we place the drawing of an image so, im placing home at the top
 	home.update()
 
-	#Temporary birth code, I'll keep it because it doesn't harm anything
+	#I'm torn about where to put this so it's here for now
+	obstacle_list.updateAll()
+
+	#Temporary birth code, I'll keep it because it doesn't harm anything but I need to move it to swarm.live()
 	birth_chance = random.SystemRandom().randint(0, 500)
 	if birth_chance == 8:
 		swarm.give_birth()

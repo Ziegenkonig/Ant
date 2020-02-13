@@ -29,9 +29,15 @@ class Scent(object):
 		self.move( self.coord[0], self.coord[1] )
 
 		#Want to randomly place the scent somewhere in the close vicinity of the ant
+		#But not place it on an obstacle
+		obstacle_check = False
+		while not obstacle_check:
+			scent_x = random.SystemRandom().randint(-20, 20)
+			scent_y = random.SystemRandom().randint(-20, 20)
 
-		scent_x = random.SystemRandom().randint(-20, 20)
-		scent_y = random.SystemRandom().randint(-20, 20)
+			if self.checkObstacles([scent_x, scent_y]):
+				obstacle_check = True
+
 		#self.coord = [scent_x, scent_y]
 		#self.move( (self.ant_origin.hit_box.width - self.hit_box.width)/2, (self.ant_origin.hit_box.height - self.hit_box.height)/2 )
 		self.move( scent_x, scent_y )
@@ -46,3 +52,18 @@ class Scent(object):
 
 		self.hit_box = self.hit_box.move( x, y )
 		self.coord = [self.hit_box.left + self.hit_box.width/2, self.hit_box.top + self.hit_box.height/2]
+
+
+	def checkObstacles(self, coord):
+
+		obstacles = self.controller.obstacle_list.obstacles
+
+		for obstacle in obstacles:
+
+			collision_check = obstacle.hit_box.collidepoint(coord[0], coord[1])
+
+			if collision_check:
+				return False
+
+		return True
+

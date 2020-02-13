@@ -109,9 +109,17 @@ class ForagerAnt(Ant):
 						self.direction[1] = -self.speed
 
 				self.move( self.direction[0], self.direction[1] )
+				#Need to check for obstacles here
+				if not self.checkObstacles():
+					self.move(-self.direction[0], -self.direction[1])
+
 				self.state = 'Wandering'
 		else:
 			self.move( self.direction[0], self.direction[1] )
+			#Need to check for obstacles here
+			if not self.checkObstacles():
+				self.move(-self.direction[0], -self.direction[1])
+					
 			self.state = 'Wandering'
 
 
