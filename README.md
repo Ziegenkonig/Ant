@@ -29,11 +29,17 @@ Stuff that's done:
 24) Implement Scent Trails (Pheremone System) somehow
 
     24.a) Non-forager ants leave territory scent markers periodically
+    
     24.b) All Scents decay at different rates, as follows: (Shortest) Food Trail --> Territory --> Explored (Longest)
+    
     24.c) Forager Ants leave Explored Scent markers while not actively gathering food
-  24.d) Tweak Scents so that they generate in a random spot around the ant, not right on top of ant
-  24.e) Explored Scent: If Explored Scent exists in scent_box, don't place a new one
-  24.f) All ants leave food trail scents while delivering food and traveling to food
+    
+    24.d) Tweak Scents so that they generate in a random spot around the ant, not right on top of ant
+    
+    24.e) Explored Scent: If Explored Scent exists in scent_box, don't place a new one
+    
+    24.f) All ants leave food trail scents while delivering food and traveling to food
+    
 25) Implement path-finding algorithm (A*) for forager ants, who can share the path that's generated with others
   25.a) Using the Explored Scents as a map of nodes, use A* to find the shortest route back home
   25.b) Connect each Explored Scent to it's neighbors via a specific radius (This was not easy)
