@@ -27,8 +27,7 @@ Stuff that's done:
 22) Have non-forager ants wander, but prevent from getting too far from home
 23) Tweak so only foragers can communicate food whereabouts
 24) Implement Scent Trails (Pheremone System) somehow
-  
-  24.a) Non-forager ants leave territory scent markers periodically
+    24.a) Non-forager ants leave territory scent markers periodically
   
   24.b) All Scents decay at different rates, as follows: (Shortest) Food Trail --> Territory --> Explored (Longest)
   24.c) Forager Ants leave Explored Scent markers while not actively gathering food
