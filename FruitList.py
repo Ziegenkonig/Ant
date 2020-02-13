@@ -40,8 +40,8 @@ class FruitList(object):
 		for i, fruit in enumerate(self.fruits):
 
 			#Want to exclude where the ants will be spawning from the spawn points
-			x = random.choice( [random.SystemRandom().randint(250,400),  random.SystemRandom().randint(600,750)] )
-			y = random.choice( [random.SystemRandom().randint(250,400),  random.SystemRandom().randint(600,750)] )
+			x = random.choice( [random.SystemRandom().randint(300,400),  random.SystemRandom().randint(600,700)] )
+			y = random.choice( [random.SystemRandom().randint(300,400),  random.SystemRandom().randint(600,700)] )
 
 			fruit.move(x, y)
 

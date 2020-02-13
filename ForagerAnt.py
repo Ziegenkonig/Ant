@@ -29,6 +29,12 @@ class ForagerAnt(Ant):
 		self.screen.blit(self.source_image, self.hit_box)
 		self.screen.blit(self.smell_surface, self.smell_box)
 
+		#Debugging
+		#Keeping this here so the app doesn't overload from ants constantly redrawing a path
+		if self.food_trail:
+			
+			self.drawPathHome()
+
 	#Moves the ant, is here to simplify
 	def move(self, x, y):
 
@@ -109,6 +115,67 @@ class ForagerAnt(Ant):
 			self.state = 'Wandering'
 
 
+	#Overloading hunt function because initial pathfinding logic needs to be unique to foragers
+	def hunt(self):
+
+		if self.target in self.controller.fruit_list.fruits:
+
+			#Ant is not blind
+			if not self.hit_box.colliderect(self.target.hit_box):
+				
+				#self.state = 'Hunting'
+
+				self.moveToTarget()
+				self.markExploredScent()
+				self.markFoodScent()
+
+				#For now this is fine but we'll need to add in some fancier hit detection later
+				if self.hit_box.colliderect(self.target.hit_box):
+
+					if not self.food_trail and not self.target.path:
+
+						self.initializeStartEnd()
+						self.food_trail = self.controller.a_star.execute(self, self.target, self.controller)
+						self.target.path = self.food_trail
+						self.food_trail_goal = self.target
+
+					elif not self.food_trail and self.target.path:
+						
+						self.food_trail = self.target.path
+						self.food_trail_goal = self.target
+
+					self.move( -self.direction[0], -self.direction[1] )
+					self.state = 'Harvesting Food'
+					print(self.name + ' has begun harvesting the delicious food!')
+
+		else:
+
+			self.state = 'Lazing'
+			self.target = None
+
+
+	def initializeStartEnd(self):
+
+		scents = self.controller.scent_list.explored_scents
+
+		# Setting goal for path
+		self.controller.scent_list.createExploredScent(self)
+		scents[-1].hit_box.top = 0
+		scents[-1].hit_box.left = 0
+		scents[-1].move(self.home.coord[0], self.home.coord[1])
+		scents[-1].coord = [self.home.coord[0], self.home.coord[1]]
+		scents[-1].resetNeighborBox()
+
+		# Setting start for path
+		self.controller.scent_list.createExploredScent(self)
+		scents[-1].hit_box.top = 0
+		scents[-1].hit_box.left = 0
+		scents[-1].move(self.target.coord[0], self.target.coord[1])
+		scents[-1].coord = [self.target.coord[0], self.target.coord[1]]
+		scents[-1].resetNeighborBox()
+
+		self.controller.scent_list.registerExploredScentNeighbors()
+
 	#Ant has good nose
 	def withinSmellRange(self, fruit_list):
 		
@@ -116,7 +183,7 @@ class ForagerAnt(Ant):
 		collision_check = self.smell_box.collidelist(fruit_list.smell_boxes)
 
 		#Ant hungers for victory
-		if collision_check != -1 and self.state != 'Hunting' and self.state != 'Harvesting Food' and self.state != 'Delivering Food':
+		if collision_check != -1 and self.state != 'Hunting' and self.state != 'Harvesting Food' and self.state != 'Delivering Food' and self.state != 'Following Food Trail':
 
 			try:
 

@@ -70,7 +70,7 @@ class AntSwarm(object):
 					self.population.append( ForagerAnt( self.screen, self.home, self.controller, self.ant_source_image, 'Forager Ant #' + str(i) ))
 					self.population[-1].move( self.screen.get_width()/2, self.screen.get_height()/2 )
 					self.ant_boxes.append( self.population[i].hit_box )
-					self.forager_population.append(self.population[i])
+					self.forager_population.append(self.population[-1])
 				else:
 					self.population.append( Ant( self.screen, self.home, self.controller, self.ant_source_image, name ) )
 					self.population[-1].move( self.screen.get_width()/2, self.screen.get_height()/2 )
@@ -92,12 +92,13 @@ class AntSwarm(object):
 	#Decided Ant needed a separate function for this, it has potential to be expanded a lot
 	def environmentCheck(self, fruit_list):
 
-		for ant in self.population:
+		# for ant in self.population:
 
-			ant.withinSmellRange(fruit_list)
+		# 	ant.withinSmellRange(fruit_list)
 
 		for ant in self.forager_population:
 
+			ant.withinSmellRange(fruit_list)
 			ant.shareFoodLocation()
 
 
@@ -117,6 +118,10 @@ class AntSwarm(object):
 			elif ant.state == 'Harvesting Food':
 
 				ant.harvestFood()
+
+			elif ant.state == 'Following Food Trail':
+
+				ant.followFoodTrail()
 
 			elif ant.state == 'Delivering Food':
 

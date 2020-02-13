@@ -39,6 +39,7 @@ class Home(object):
 	def move(self, x, y):
 
 		self.hit_box = self.hit_box.move( x, y )
+		self.coord = [(self.hit_box.left + self.hit_box.width/2), (self.hit_box.top + self.hit_box.height/2)]
 
 
 

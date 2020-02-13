@@ -23,6 +23,8 @@ class Fruit(object):
 		self.fp = fp
 
 		self.hit_box = self.source_image.get_rect()
+		self.path = []
+
 
 		self.smell_surface = pygame.Surface([self.hit_box.width*8, self.hit_box.height*8])
 		self.smell_surface.fill([0, 255, 0])
@@ -32,7 +34,7 @@ class Fruit(object):
 		#self.smell_box.width *= 3
 		#self.smell_box.height *= 3
 
-		self.coord = [self.hit_box.left, self.hit_box.top]
+		self.coord = coord
 
 		self.width = self.hit_box.width
 		self.height = self.hit_box.height
@@ -51,4 +53,5 @@ class Fruit(object):
 		self.smell_box = self.smell_box.move( x - ((self.smell_box.width/2)-self.hit_box.width/2), y - ((self.smell_box.height/2)-self.hit_box.height/2) )
 		#print(str(self.smell_box.left) + ', ' + str(self.smell_box.right))
 		#print(str(self.hit_box.left) + ', ' + str(self.hit_box.right))
-		self.coord = [self.hit_box.left, self.hit_box.top]
+		self.coord = [self.hit_box.left + self.hit_box.width/2, self.hit_box.top + self.hit_box.height/2]
+		#self.coord = [self.hit_box.left, self.hit_box.top]

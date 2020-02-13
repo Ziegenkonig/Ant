@@ -21,7 +21,8 @@ class Ant(object):
 		self.food_scent_chance = 0.01
 		self.territory_scent_chance = 0.01
 
-		self.path_home = []
+		self.food_trail = []
+		self.food_trail_goal = None
 
 		self.harvest_timer = 100
 		self.inv_space = 5
@@ -141,7 +142,7 @@ class Ant(object):
 	def moveToTarget(self):
 
 		#Making things a little easier for Ant to process
-		t_coord = [self.target.coord[0] + (self.target.width/2), self.target.coord[1] + (self.target.height/2)]
+		t_coord = [self.target.coord[0], self.target.coord[1]]
 		a_coord = [self.hit_box.left, self.hit_box.top]
 
 		#Ant smells prey on the x-axis
@@ -168,7 +169,7 @@ class Ant(object):
 	def returnHome(self):
 
 		#Making things a little easier for Ant to process
-		home_coord = [self.home.coord[0] + (self.home.width/2), self.home.coord[1] + (self.home.height/2)]
+		home_coord = [self.home.coord[0], self.home.coord[1]]
 		a_coord = [self.hit_box.left, self.hit_box.top]
 
 		#Ant smells prey on the x-axis
@@ -191,35 +192,31 @@ class Ant(object):
 		self.move( self.direction[0], self.direction[1] )
 
 
+	def followFoodTrail(self):
 
-	#Ant is on the hunt
-	#This needs to be replaced with a proper pathfinding algorithm eventually 
-	def hunt(self):
 
-		if self.target in self.controller.fruit_list.fruits:
+		if not self.target:
 
-			#Ant is not blind
-			if not self.hit_box.colliderect(self.target.hit_box):
-				
-				#self.state = 'Hunting'
+			self.target = self.food_trail[-2]
 
-				self.moveToTarget()
+		if self.target.coord == self.food_trail_goal.coord and self.target != self.food_trail_goal:
+			self.target = self.food_trail_goal
 
-				self.markFoodScent()
 
-				#For now this is fine but we'll need to add in some fancier hit detection later
-				if self.hit_box.colliderect(self.target.hit_box):
+		self.moveToTarget()
+		self.markFoodScent()
 
-					self.path_home = self.controller.a_star.execute(self, self.target, self.controller)
+		if self.hit_box.colliderect(self.target.hit_box):
 
-					self.move( -self.direction[0], -self.direction[1] )
-					self.state = 'Harvesting Food'
-					print(self.name + ' has begun harvesting the delicious food!')
+			if self.target == self.food_trail_goal:
 
-		else:
+				self.state = 'Harvesting Food'
+				print(self.name + ' has begun harvesting the delicious food!')
+				self.move( -self.direction[0], -self.direction[1] )
 
-			self.state = 'Lazing'
-			self.target = None
+			else:
+
+				self.target = self.food_trail[self.food_trail.index(self.target)+1]
 
 
 	#Ant must harvest the fruits of ant's labor
@@ -233,7 +230,8 @@ class Ant(object):
 			else:
 				self.state = 'Delivering Food'
 
-				self.target.fp -= self.inv_space
+				self.food_trail_goal.fp -= self.inv_space
+				self.target = self.food_trail[-2]
 				#print('Fruit FP: ' + str(self.target.fp))
 
 				self.controller.foodbit_list.harvestedFoodBit(self, self.inv_space)
@@ -250,20 +248,44 @@ class Ant(object):
 
 	#Ant must provide for the mother country
 	def deliverFood(self):
-		
-		self.returnHome()
 
+		if self.target == self.food_trail_goal:
+
+			self.target = self.food_trail[-2]
+
+		if self.target.coord == self.home.coord and self.target != self.home:
+			self.target = self.home
+
+
+		self.moveToTarget()
 		self.markFoodScent()
-
 		self.carried_item.moveToAnt()
 
-		if self.hit_box.colliderect(self.home.hit_box):
-			self.move( -self.direction[0], -self.direction[1] )
-			self.home.increaseFood(self.inv_space)
-			self.state = 'Hunting'
-			self.carried_item.ant = None
-			self.controller.foodbit_list.deleteFoodBit(self.carried_item)
-			self.carried_item = None
+		if self.hit_box.colliderect(self.target.hit_box):
+
+			if self.target == self.home:
+
+				self.move( -self.direction[0], -self.direction[1] )
+				self.home.increaseFood(self.inv_space)
+				self.carried_item.ant = None
+				self.controller.foodbit_list.deleteFoodBit(self.carried_item)
+				self.carried_item = None
+
+				if self.food_trail_goal:
+
+					print('Headed to food')
+					self.state = 'Following Food Trail'
+					self.target = self.food_trail[0]
+
+				else:
+
+					self.state = 'Lazing'
+					self.food_trail = []
+					self.food_trail_goal = None
+
+			else:
+
+				self.target = self.food_trail[self.food_trail.index(self.target)-1]
 
 
 	#Ant has good nose
@@ -290,15 +312,17 @@ class Ant(object):
 	#Ant must share bounty with others
 	def shareFoodLocation(self):
 
-		if self.state == 'Delivering Food' or self.state == 'Hunting':
+		if self.state == 'Delivering Food' or self.state == 'Following Food Trail':
 			
 			for ant in self.controller.ant_swarm.population:
 				
-				if ant.state != 'Delivering Food' and ant.state != 'Hunting' and ant.state != 'Harvesting Food':
+				if ant.state != 'Delivering Food' and ant.state != 'Following Food Trail' and ant.state != 'Harvesting Food':
 					if self.hit_box.colliderect(ant.hit_box) and self != ant:
 
-						ant.target = self.target
-						ant.state = 'Hunting'
+						ant.food_trail = self.food_trail
+						ant.food_trail_goal = self.food_trail_goal
+						ant.target = ant.food_trail[1]
+						ant.state = 'Following Food Trail'
 						print(self.name + ' told ' + ant.name + ' about a food source!')
 
 
@@ -368,10 +392,10 @@ class Ant(object):
 
 	def drawPathHome(self):
 
-		for i in range(1, len(self.path_home)-1):
+		for i in range(1, len(self.food_trail)):
 
-			start_coord = [ self.path_home[i-1].coord[0], self.path_home[i-1].coord[1] ]
-			end_coord = [ self.path_home[i].coord[0], self.path_home[i].coord[1] ]
+			start_coord = [ self.food_trail[i-1].coord[0], self.food_trail[i-1].coord[1] ]
+			end_coord = [ self.food_trail[i].coord[0], self.food_trail[i].coord[1] ]
 
 			pygame.draw.line(pygame.display.get_surface(), 
 							 [255, 255, 0],

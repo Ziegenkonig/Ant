@@ -36,7 +36,6 @@ class ScentList(object):
 					self.scents.remove(scent)
 				
 
-
 	def createExploredScent(self, ant):
 
 		new_scent = ExploredScent(self.screen, self.controller, ant, self.ant_source_image)
