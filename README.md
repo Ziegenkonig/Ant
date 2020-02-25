@@ -1,6 +1,8 @@
 # Ant
 I just had an intense craving one day to program some ants and here we are. There's no real end-goal here, I'm doing this purely for fun and learning. It's taught me a lot about Python's OOP practices as well as OOP practices in general. These ants are my children
 
+This program is riddled with bugs. (Ehehe,  not really, just an ant pun)
+
 Stuff that's done:
 
 1) Create single dot on canvas
